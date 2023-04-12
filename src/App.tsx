@@ -1,90 +1,69 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import * as Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 
 
 const options: Highcharts.Options = {
   title: {
-    text: 'My chart',
+    text: 'Графики',
   },
-  series: [
-    {
-      name: 'vds_wsub',
-      type: 'line',
-      data: [
-        {
-          name: 'Астраханьгазпром',
-          x: 1.3181,
-          y: 20444.906195843847,
-        },
-        {
-          name: 'Когалымнефтегаз',
-          x: 1.4659870000000002,
-          y: 19547.57211652679,
-        },
-        {
-          name: 'Якутская ТЭК',
-          x: 1.4856474244894,
-          y: 17700.20810192281,
-        },
-        {
-          name: 'Сургутгаздобыча',
-          x: 4.999467424489399,
-          y: 16312.606703476185,
-        },
-      ],
-    },
-    {
-      name: 'vds_sub',
-      type: 'line',
-      data: [
-        {
-          name: 'Когалымнефтегаз',
-          x: 0.147887,
-          y: 29009.029327711363,
-        },
-        {
-          name: 'Астраханьгазпром',
-          x: 1.4659870000000002,
-          y: 25893.262836499664,
-        },
-        {
-          name: 'Якутская ТЭК',
-          x: 1.4856474244894,
-          y: 24810.482824211416,
-        },
-        {
-          name: 'Сургутгаздобыча',
-          x: 4.999467424489399,
-          y: 22179.304418474505,
-        },
-        {
-          name: 'Урайнефтегаз',
-          x: 5.055385424489399,
-          y: 19528.838387790784,
-        },
-        {
-          name: 'Волгограднефтепереработка',
-          x: 18.984285424489396,
-          y: 18951.12009989673,
-        },
-      ],
-    },
-  ],
+  series: [ ],
 };
+
+function addDataToOptions (data: any) {
+	debugger
+	options.series = [];
+	options.series?.push({
+		name: 'С учетом субсидий',
+		type: 'line',
+		data:data[2021]?.vds_wsub});
+	options.series?.push({
+		name: 'Без учета субсидий',
+		type: 'line',
+		data:data[2021]?.vds_sub});
+}
 
 
 const App = (props: HighchartsReact.Props) => {
   const chartComponentRef = useRef<HighchartsReact.RefObject>(null);
-
-  return (
-    <HighchartsReact
-      highcharts={Highcharts}
-      options={options}
-      ref={chartComponentRef}
-      {...props}
-    />
-  );
+  const [error, setError] = useState<string>('');
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [items, setItems] = useState([]);
+  const [currentYear, setCurrentYear] = useState<number>();
+  
+  useEffect(() => {
+	  fetch("https://iori3.ranepa.ru/science_api/v1/oil_refining/1/")
+		.then(res => res.json())
+		.then(
+		  (result) => {
+			setIsLoaded(true);
+			setItems(result.volume_marginality_relation);
+			setCurrentYear(2021);
+		  },
+		  (error) => {
+			setIsLoaded(true);
+			setError(error);
+		  }
+		)
+	}, [])
+	useEffect(()=> {
+		addDataToOptions(items);
+	}, [currentYear])
+//   return <>
+	if (error) {
+		return <div>Ошибка: {error}</div>
+	} else if (!isLoaded) {
+		return <div>Загрузка...</div>;
+	} else {
+		return (
+			<HighchartsReact
+			highcharts={Highcharts}
+			options={options}
+			allowChartUpdate={true}
+			ref={chartComponentRef}
+			{...props}
+			/>
+		)}
 };
 
 export default App;
