@@ -1,12 +1,27 @@
 import React, { useRef, useState, useEffect } from 'react';
 import * as Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
+import {fetchData} from './mainAPI'
 
 
 const options: Highcharts.Options = {
-  title: {
-    text: 'Графики',
-  },
+	title: {
+		text: '',
+	},
+    yAxis: {
+		title: {
+			text: 'ВДС НПЗ. руб/тонну'
+	}
+    },
+	xAxis: {
+		accessibility: {
+			rangeDescription: 'Range: 2010 to 2020'
+		}
+	},
+	legend: {
+        layout: 'vertical',
+        verticalAlign: 'top'
+    },
   series: [ ],
 };
 
@@ -21,6 +36,9 @@ function addDataToOptions (data: any,currentYear: number) {
 		name: 'Без учета субсидий',
 		type: 'line',
 		data:data[currentYear]?.vds_sub});
+		if (options.title != undefined) {
+			options.title.text = `${currentYear}`
+		}
 }
 
 
@@ -36,23 +54,22 @@ const App = (props: HighchartsReact.Props) => {
   }
 
   useEffect(() => {
-	  fetch("https://iori3.ranepa.ru/science_api/v1/oil_refining/1/")
-		.then(res => res.json())
-		.then(
-		  (result) => {
+	fetchData("https://iori3.ranepa.ru/science_api/v1/oil_refining/1/", 
+		(result) => {
 			setIsLoaded(true);
 			setItems(result.volume_marginality_relation);
 			setCurrentYear(2021);
-		  },
-		  (error) => {
+		},
+		(error) => {
 			setIsLoaded(true);
 			setError(error);
-		  }
-		)
-	}, [])
+		}
+	)
+}, []);
+
 	useEffect(()=> {
 		addDataToOptions(items, currentYear);
-	}, [currentYear])
+	}, [currentYear]);
 
 	if (error) {
 		return <div>Ошибка: {error}</div>
@@ -81,7 +98,6 @@ const App = (props: HighchartsReact.Props) => {
 			<HighchartsReact
 			highcharts={Highcharts}
 			options={options}
-			allowChartUpdate={true}
 			ref={chartComponentRef}
 			{...props}
 			/>
