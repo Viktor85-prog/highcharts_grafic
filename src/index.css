@@ -11,3 +11,32 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.select-btns {
+	display: flex;
+	margin: 20px;
+}
+
+.select-btn-view {
+/* width: 20px; */
+height: 20px;
+display: flex;
+justify-content: center;
+align-items: center;
+border: 1px solid rgb(200, 200, 200);
+color: rgb(80, 80, 80) ;
+padding: 5px;
+font-weight: bold;
+}
+
+.select-btn-view:hover{
+background-color:rgb(220, 220, 220);
+}
+
+.select-btn-radio:checked + .select-btn-view{
+background-color:rgb(138, 44, 40);
+color: white;
+}
+.select-btns:first-child~.select-btn-view {
+	border-radius: 20px;
+}

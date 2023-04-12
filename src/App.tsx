@@ -49,13 +49,31 @@ const App = (props: HighchartsReact.Props) => {
 	useEffect(()=> {
 		addDataToOptions(items);
 	}, [currentYear])
-//   return <>
+
 	if (error) {
 		return <div>Ошибка: {error}</div>
 	} else if (!isLoaded) {
 		return <div>Загрузка...</div>;
 	} else {
-		return (
+		return (<>
+			<div className="select-btns">
+				<label className="select-btn">
+					<input className="select-btn-radio" type="radio" name="year" hidden />
+					<span className="select-btn-view">2021</span>
+				</label>
+				<label className="select-btn">
+					<input className="select-btn-radio" type="radio" name="year" hidden />
+					<span className="select-btn-view">2022</span>
+				</label>
+				<label className="select-btn">
+					<input className="select-btn-radio" type="radio" name="year" hidden/>
+					<span className="select-btn-view">2023</span>
+				</label>
+				<label className="select-btn">
+					<input className="select-btn-radio" type="radio" name="year" hidden/>
+					<span className="select-btn-view">2024</span>
+				</label>
+			</div>
 			<HighchartsReact
 			highcharts={Highcharts}
 			options={options}
@@ -63,6 +81,7 @@ const App = (props: HighchartsReact.Props) => {
 			ref={chartComponentRef}
 			{...props}
 			/>
+			</>
 		)}
 };
 
