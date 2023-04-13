@@ -11,13 +11,8 @@ const options: Highcharts.Options = {
     yAxis: {
 		title: {
 			text: 'ВДС НПЗ. руб/тонну'
-	}
-    },
-	xAxis: {
-		accessibility: {
-			rangeDescription: 'Range: 2010 to 2020'
 		}
-	},
+    },
 	legend: {
         layout: 'vertical',
         verticalAlign: 'top'
@@ -36,9 +31,9 @@ function addDataToOptions (data: any,currentYear: number) {
 		name: 'Без учета субсидий',
 		type: 'line',
 		data:data[currentYear]?.vds_sub});
-		if (options.title != undefined) {
-			options.title.text = `${currentYear}`
-		}
+		// if (options.title != undefined) {
+		// 	options.title.text = `${currentYear}`
+		// }
 }
 
 
